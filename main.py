@@ -29,6 +29,21 @@ def get_commits_with_label(owner, repo, since_date, until_date, token):
 
     return commits
 
+
+def count_code_changes(commit, token):
+    diff_url = commit['url']
+    headers = {
+        "Accept": "application/vnd.github.diff"
+    }
+    response = requests.get(diff_url, headers=headers)
+    response.raise_for_status()
+    diff_content = response.text.splitlines()
+
+    added_lines = sum(1 for line in diff_content if line.startswith('+') and not line.startswith('+++'))
+    removed_lines = sum(1 for line in diff_content if line.startswith('-') and not line.startswith('---'))
+
+    return added_lines, removed_lines
+
 # 例: owner = リポジトリの所有者, repo = リポジトリ名, since_date = 開始日, until_date = 終了日, token = GitHubの個人アクセストークン
 owner = os.environ.get("GITHUB_OWNER")
 repo = os.environ.get("GITHUB_REPO")
@@ -39,5 +54,9 @@ token = os.environ.get("GITHUB_TOKEN")
 commits = get_commits_with_label(owner, repo, since_date, until_date, token)
 
 for commit in commits:
-    print(commit["commit"]["message"])
+    print("Commit message:", commit["commit"]["message"])
     # 追加行数や削除行数の処理を追加することができます
+    added_lines, removed_lines = count_code_changes(commit, token)
+    print("Added lines:", added_lines)
+    print("Removed lines:", removed_lines)
+    print()
