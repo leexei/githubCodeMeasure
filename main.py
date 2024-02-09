@@ -20,6 +20,8 @@ def get_commits_with_label(owner, repo, since_date, until_date, token):
         response.raise_for_status()
         data = response.json()
 
+        commits.extend(data)  # 取得したコミット情報をcommitsリストに追加する
+
         if "next" in response.links:
             url = response.links["next"]["url"]
         else:
@@ -27,7 +29,7 @@ def get_commits_with_label(owner, repo, since_date, until_date, token):
 
     return commits
 
-# 例: owner = リポジトリの所有者, repo = リポジトリ名, label = ラベル名, since_date = 開始日, until_date = 終了日, token = GitHubの個人アクセストークン
+# 例: owner = リポジトリの所有者, repo = リポジトリ名, since_date = 開始日, until_date = 終了日, token = GitHubの個人アクセストークン
 owner = os.environ.get("GITHUB_OWNER")
 repo = os.environ.get("GITHUB_REPO")
 since_date = "2023-04-01T00:00:00Z"
