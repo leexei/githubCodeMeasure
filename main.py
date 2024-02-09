@@ -36,7 +36,7 @@ repo = "github_code_measure"
 label = "label_name"
 since_date = "2023-04-01T00:00:00Z"
 until_date = "2024-02-09T23:59:59Z"
-token = "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"
+token = ""
 
 commits = get_commits_with_label(owner, repo, label, since_date, until_date, token)
 
