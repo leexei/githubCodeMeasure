@@ -1,6 +1,7 @@
 import requests
+import os
 
-def get_commits_with_label(owner, repo, label, since_date, until_date, token):
+def get_commits_with_label(owner, repo, since_date, until_date, token):
     url = f"https://api.github.com/repos/{owner}/{repo}/commits"
     params = {
         "since": since_date,
@@ -19,10 +20,6 @@ def get_commits_with_label(owner, repo, label, since_date, until_date, token):
         response.raise_for_status()
         data = response.json()
 
-        for commit in data:
-            if label in commit["commit"]["message"]:
-                commits.append(commit)
-
         if "next" in response.links:
             url = response.links["next"]["url"]
         else:
@@ -31,14 +28,13 @@ def get_commits_with_label(owner, repo, label, since_date, until_date, token):
     return commits
 
 # 例: owner = リポジトリの所有者, repo = リポジトリ名, label = ラベル名, since_date = 開始日, until_date = 終了日, token = GitHubの個人アクセストークン
-owner = "leexei"
-repo = "github_code_measure"
-label = "label_name"
+owner = os.environ.get("GITHUB_OWNER")
+repo = os.environ.get("GITHUB_REPO")
 since_date = "2023-04-01T00:00:00Z"
-until_date = "2024-02-09T23:59:59Z"
-token = ""
+until_date = "2024-02-10T23:59:59Z"
+token = os.environ.get("GITHUB_TOKEN")
 
-commits = get_commits_with_label(owner, repo, label, since_date, until_date, token)
+commits = get_commits_with_label(owner, repo, since_date, until_date, token)
 
 for commit in commits:
     print(commit["commit"]["message"])
